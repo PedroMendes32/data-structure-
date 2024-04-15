@@ -2,22 +2,53 @@
 
 value create(void *ptr, enum type t)
 {
+	if (ptr == NULL)
+	{
+		fprintf(stderr,"Erro: Parâmetro inválido.\n");
+		exit(EXIT_FAILURE);
+	}
+	
 	value v;
 	v.val = ptr;
 	v.type = t;
 	return v;
 }
 
-void init_stack (stack **s, int n)
+void init_stack (stack **s, size_t n)
 {
+	if (n <= 0)
+	{
+		fprintf(stderr,"Erro: Tamanho de pilha inválido.\n");
+		exit(EXIT_FAILURE);
+	}
+	
 	*s = (stack*) malloc (sizeof(stack));
+	
+	if (*s == NULL) 
+	{
+		fprintf(stderr,"Erro: Falha durante alocação dinâmica da pilha.\n");
+		exit(EXIT_FAILURE);
+	} 
+	
 	(*s)->top = 0;
 	(*s)->size = n;
 	(*s)->values = (value*) malloc (sizeof(value) * n);
+	
+	if ((*s)->values == NULL)
+	{
+		fprintf(stderr,"Erro: Falha durante alocação dinâmica dos itens da pilha.\n");
+		free(*s);
+		exit(EXIT_FAILURE);
+	}
 }
 
 void push (stack **s, value v)
 {
+	if (*s == NULL)
+	{
+		fprintf(stderr,"Erro: objeto nulo.\n");
+		exit(EXIT_FAILURE);
+	}
 	if ((*s)->top >= (*s)->size)
 	{
 		printf("Full stack!\n");
@@ -29,6 +60,11 @@ void push (stack **s, value v)
 	
 value* pop (stack **s)
 {
+	if (*s == NULL)
+	{
+		fprintf(stderr,"Erro: objeto nulo.\n");
+		exit(EXIT_FAILURE);
+	}
 	(*s)->top--;
 	if ((*s)->top < 0)
 	{
@@ -40,9 +76,16 @@ value* pop (stack **s)
 	
 void show_stack (stack **s)
 {
-	printf("[ ");
-	for (int i = 0; i < (*s)->top; i++)
+	if (*s == NULL || (*s)->values == NULL)
 	{
+		fprintf(stderr,"Erro: objeto nulo.\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	printf("[ ");
+	
+	for (int i = 0; i < (*s)->top; i++)
+	{	
 		switch ((*s)->values[i].type)
 		{
 			case INT:
@@ -84,6 +127,19 @@ void show_stack (stack **s)
 			break;
 		}
 		if (i + 1 < (*s)->top) printf(",");
+		
 	}
 	printf(" ]\n\n");
+}
+
+void clear_stack (stack **s)
+{
+	if (*s != NULL)
+	{
+		if ((*s)->values != NULL) 
+		{
+			free((*s)->values);
+		}
+		free(*s);
+	}
 }

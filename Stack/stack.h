@@ -18,15 +18,16 @@ typedef struct value value;
 struct stack
 {
 	int top;
-	int size;
+	size_t size;
 	value *values;	
 };
 typedef struct stack stack;
 
 value create(void *ptr, enum type t);
-void init_stack (stack **s, int n);
+void init_stack (stack **s, size_t n);
 void push (stack **s, value v);
 value* pop (stack **s);
 void show_stack (stack **s);
+void clear_stack (stack **s);
 
 #endif
